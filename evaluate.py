@@ -72,13 +72,13 @@ def get_err_scores(test_res, val_res):
 def get_loss(predict, gt):
     return eval_mseloss(predict, gt)
 
-def get_f1_scores(total_err_scores, gt_labels, topk=1):
+def get_f1_scores(total_err_scores, gt_labels, sensor_rank_k=1):
     print('total_err_scores', total_err_scores.shape)
     # remove the highest and lowest score at each timestep
     total_features = total_err_scores.shape[0]
 
-    # topk_indices = np.argpartition(total_err_scores, range(total_features-1-topk, total_features-1), axis=0)[-topk-1:-1]
-    topk_indices = np.argpartition(total_err_scores, range(total_features-topk-1, total_features), axis=0)[-topk:]
+    # topk_indices = np.argpartition(total_err_scores, range(total_features-1-sensor_rank_k, total_features-1), axis=0)[-sensor_rank_k-1:-1]
+    topk_indices = np.argpartition(total_err_scores, range(total_features-sensor_rank_k-1, total_features), axis=0)[-sensor_rank_k:]
     
     topk_indices = np.transpose(topk_indices)
 
@@ -96,10 +96,10 @@ def get_f1_scores(total_err_scores, gt_labels, topk=1):
 
     return final_topk_fmeas
 
-def get_val_performance_data(total_err_scores, normal_scores, gt_labels, topk=1):
+def get_val_performance_data(total_err_scores, normal_scores, gt_labels, sensor_rank_k=1):
     total_features = total_err_scores.shape[0]
 
-    topk_indices = np.argpartition(total_err_scores, range(total_features-topk-1, total_features), axis=0)[-topk:]
+    topk_indices = np.argpartition(total_err_scores, range(total_features-sensor_rank_k-1, total_features), axis=0)[-sensor_rank_k:]
 
     total_topk_err_scores = []
     topk_err_score_map=[]
@@ -126,12 +126,12 @@ def get_val_performance_data(total_err_scores, normal_scores, gt_labels, topk=1)
     return f1, pre, rec, auc_score, thresold
 
 
-def get_best_performance_data(total_err_scores, gt_labels, topk=1):
+def get_best_performance_data(total_err_scores, gt_labels, sensor_rank_k=1):
 
     total_features = total_err_scores.shape[0]
 
-    # topk_indices = np.argpartition(total_err_scores, range(total_features-1-topk, total_features-1), axis=0)[-topk-1:-1]
-    topk_indices = np.argpartition(total_err_scores, range(total_features-topk-1, total_features), axis=0)[-topk:]
+    # topk_indices = np.argpartition(total_err_scores, range(total_features-1-sensor_rank_k, total_features-1), axis=0)[-sensor_rank_k-1:-1]
+    topk_indices = np.argpartition(total_err_scores, range(total_features-sensor_rank_k-1, total_features), axis=0)[-sensor_rank_k:]
 
     total_topk_err_scores = []
     topk_err_score_map=[]

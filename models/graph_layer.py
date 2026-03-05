@@ -11,7 +11,7 @@ import math
 class GraphLayer(MessagePassing):
     def __init__(self, in_channels, out_channels, heads=1, concat=True,
                  negative_slope=0.2, dropout=0, bias=True, inter_dim=-1,**kwargs):
-        super(GraphLayer, self).__init__(aggr='add', **kwargs)
+        super(GraphLayer, self).__init__(aggr='add', node_dim=0, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -50,19 +50,29 @@ class GraphLayer(MessagePassing):
 
 
 
-    def forward(self, x, edge_index, embedding, return_attention_weights=False):
-        """"""
+    def forward(self, x, edge_index, embedding, edge_mask=None, return_attention_weights=False):
+
         if torch.is_tensor(x):
             x = self.lin(x)
             x = (x, x)
         else:
             x = (self.lin(x[0]), self.lin(x[1]))
 
-        edge_index, _ = remove_self_loops(edge_index)
-        edge_index, _ = add_self_loops(edge_index,
-                                       num_nodes=x[1].size(self.node_dim))
+        if edge_mask is not None:
+            edge_mask = edge_mask.view(-1).float()
 
-        out = self.propagate(edge_index, x=x, embedding=embedding, edges=edge_index,
+        edge_index, edge_mask = remove_self_loops(edge_index, edge_mask)
+        edge_index, edge_mask = add_self_loops(
+            edge_index,
+            edge_mask,
+            fill_value=0.0,
+            num_nodes=x[1].size(self.node_dim)
+        )
+
+        if edge_mask is not None:
+            edge_mask = edge_mask.bool()
+
+        out = self.propagate(edge_index, x=x, embedding=embedding, edges=edge_index, edge_mask=edge_mask,
                              return_attention_weights=return_attention_weights)
 
         if self.concat:
@@ -82,6 +92,7 @@ class GraphLayer(MessagePassing):
     def message(self, x_i, x_j, edge_index_i, size_i,
                 embedding,
                 edges,
+                edge_mask,
                 return_attention_weights):
 
         x_i = x_i.view(-1, self.heads, self.out_channels)
@@ -107,7 +118,11 @@ class GraphLayer(MessagePassing):
 
 
         alpha = F.leaky_relu(alpha, self.negative_slope)
-        alpha = softmax(alpha, edge_index_i, size_i)
+
+        if edge_mask is not None:
+            alpha = alpha.masked_fill(edge_mask.view(-1, 1, 1), -1e9)
+
+        alpha = softmax(alpha, edge_index_i, num_nodes=size_i)
 
         if return_attention_weights:
             self.__alpha__ = alpha

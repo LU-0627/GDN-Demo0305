@@ -7,7 +7,6 @@ SLIDE_WIN=5
 dim=64
 out_layer_num=1
 SLIDE_STRIDE=1
-topk=5
 out_layer_inter_dim=128
 val_ratio=0.2
 decay=0
@@ -36,7 +35,6 @@ if [[ "$gpu_n" == "cpu" ]]; then
         -decay $decay \
         -val_ratio $val_ratio \
         -report $report \
-        -topk $topk \
         -device 'cpu'
 else
     CUDA_VISIBLE_DEVICES=$gpu_n  python main.py \
@@ -54,6 +52,5 @@ else
         -out_layer_inter_dim $out_layer_inter_dim \
         -decay $decay \
         -val_ratio $val_ratio \
-        -report $report \
-        -topk $topk
+        -report $report
 fi

@@ -92,8 +92,7 @@ class Main():
                 dim=train_config['dim'], 
                 input_dim=train_config['slide_win'],
                 out_layer_num=train_config['out_layer_num'],
-                out_layer_inter_dim=train_config['out_layer_inter_dim'],
-                topk=train_config['topk']
+            out_layer_inter_dim=train_config['out_layer_inter_dim']
             ).to(self.device)
 
 
@@ -157,8 +156,8 @@ class Main():
     
         test_scores, normal_scores = get_full_err_scores(test_result, val_result)
 
-        top1_best_info = get_best_performance_data(test_scores, test_labels, topk=1) 
-        top1_val_info = get_val_performance_data(test_scores, normal_scores, test_labels, topk=1)
+        top1_best_info = get_best_performance_data(test_scores, test_labels, sensor_rank_k=1) 
+        top1_val_info = get_val_performance_data(test_scores, normal_scores, test_labels, sensor_rank_k=1)
 
 
         print('=========================** Result **============================\n')
@@ -180,7 +179,7 @@ class Main():
         
         if self.datestr is None:
             now = datetime.now()
-            self.datestr = now.strftime('%m|%d-%H:%M:%S')
+            self.datestr = now.strftime('%m%d-%H%M%S')
         datestr = self.datestr          
 
         paths = [
@@ -212,7 +211,6 @@ if __name__ == "__main__":
     parser.add_argument('-out_layer_inter_dim', help='out_layer_inter_dim', type = int, default=256)
     parser.add_argument('-decay', help='decay', type = float, default=0)
     parser.add_argument('-val_ratio', help='val ratio', type = float, default=0.1)
-    parser.add_argument('-topk', help='topk num', type = int, default=20)
     parser.add_argument('-report', help='best / val', type = str, default='best')
     parser.add_argument('-load_model_path', help='trained model path', type = str, default='')
 
@@ -240,7 +238,6 @@ if __name__ == "__main__":
         'out_layer_inter_dim': args.out_layer_inter_dim,
         'decay': args.decay,
         'val_ratio': args.val_ratio,
-        'topk': args.topk,
     }
 
     env_config={
