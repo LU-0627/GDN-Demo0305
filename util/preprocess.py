@@ -1,4 +1,4 @@
-# preprocess data
+
 import numpy as np
 import re
 
@@ -20,7 +20,7 @@ def get_most_common_features(target, all_features, max = 3, min = 3):
     return res
 
 def build_net(target, all_features):
-    # get edge_indexes, and index_feature_map
+    
     main_keys = target.split('_')
     edge_indexes = [
         [],
@@ -28,7 +28,7 @@ def build_net(target, all_features):
     ]
     index_feature_map = [target]
 
-    # find closest features(nodes):
+    
     parent_list = [target]
     graph_map = {}
     depth = 2
@@ -40,7 +40,7 @@ def build_net(target, all_features):
             if feature not in graph_map:
                 graph_map[feature] = []
             
-            # exclude parent
+            
             pure_children = []
             for child in children:
                 if child not in graph_map:
@@ -72,7 +72,7 @@ def construct_data(data, feature_map, labels=0):
             res.append(data.loc[:, feature].values.tolist())
         else:
             print(feature, 'not exist in data')
-    # append labels as last
+    
     sample_n = len(res[0])
 
     if type(labels) == int:
@@ -103,11 +103,11 @@ def build_loc_net(struc, all_features, feature_map=[]):
 
             if child not in index_feature_map:
                 print(f'error: {child} not in index_feature_map')
-                # index_feature_map.append(child)
+                
 
             c_index = index_feature_map.index(child)
-            # edge_indexes[0].append(p_index)
-            # edge_indexes[1].append(c_index)
+            
+            
             edge_indexes[0].append(c_index)
             edge_indexes[1].append(p_index)
         

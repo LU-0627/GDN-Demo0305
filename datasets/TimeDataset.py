@@ -20,7 +20,7 @@ class TimeDataset(Dataset):
 
         data = x_data
 
-        # to tensor
+        
         data = torch.tensor(data).double()
         labels = torch.tensor(labels).double()
 

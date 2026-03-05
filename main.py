@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 import pandas as pd
 import numpy as np
 import torch
@@ -115,7 +115,7 @@ class Main():
                 dataset_name=self.env_config['dataset']
             )
         
-        # test            
+        
         self.model.load_state_dict(torch.load(model_save_path))
         best_model = self.model.to(self.device)
 

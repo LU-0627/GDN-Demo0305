@@ -19,7 +19,7 @@ from util.preprocess import *
 
 
 def test(model, dataloader):
-    # test
+    
     loss_func = nn.MSELoss(reduction='mean')
     device = get_device()
 

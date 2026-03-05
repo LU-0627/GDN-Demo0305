@@ -74,17 +74,17 @@ def get_loss(predict, gt):
 
 def get_f1_scores(total_err_scores, gt_labels, sensor_rank_k=1):
     print('total_err_scores', total_err_scores.shape)
-    # remove the highest and lowest score at each timestep
+    
     total_features = total_err_scores.shape[0]
 
-    # topk_indices = np.argpartition(total_err_scores, range(total_features-1-sensor_rank_k, total_features-1), axis=0)[-sensor_rank_k-1:-1]
+    
     topk_indices = np.argpartition(total_err_scores, range(total_features-sensor_rank_k-1, total_features), axis=0)[-sensor_rank_k:]
     
     topk_indices = np.transpose(topk_indices)
 
     total_topk_err_scores = []
     topk_err_score_map=[]
-    # topk_anomaly_sensors = []
+    
 
     for i, indexs in enumerate(topk_indices):
        
@@ -130,7 +130,7 @@ def get_best_performance_data(total_err_scores, gt_labels, sensor_rank_k=1):
 
     total_features = total_err_scores.shape[0]
 
-    # topk_indices = np.argpartition(total_err_scores, range(total_features-1-sensor_rank_k, total_features-1), axis=0)[-sensor_rank_k-1:-1]
+    
     topk_indices = np.argpartition(total_err_scores, range(total_features-sensor_rank_k-1, total_features), axis=0)[-sensor_rank_k:]
 
     total_topk_err_scores = []

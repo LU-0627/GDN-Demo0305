@@ -144,8 +144,9 @@ class GDN(nn.Module):
             normed_mat = torch.matmul(weights.norm(dim=-1).view(-1,1), weights.norm(dim=-1).view(1,-1))
             cos_ji_mat = cos_ji_mat / normed_mat
 
-            row_mean = cos_ji_mat.mean(dim=-1, keepdim=True)
-            keep_mask = cos_ji_mat >= row_mean
+            row_q = torch.quantile(cos_ji_mat, q=0.9, dim=-1, keepdim=True)
+            keep_mask = cos_ji_mat >= row_q
+            keep_mask.fill_diagonal_(False)
 
             gated_i, gated_j = torch.where(keep_mask)
             gated_edge_index = torch.stack((gated_j, gated_i), dim=0)
