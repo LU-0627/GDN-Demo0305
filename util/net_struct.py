@@ -8,7 +8,7 @@ def get_feature_map(dataset):
         feature_list.append(ft.strip())
 
     return feature_list
-# graph is 'fully-connect'
+
 def get_fc_graph_struc(dataset):
     feature_file = open(f'./data/{dataset}/list.txt', 'r')
 
@@ -40,11 +40,11 @@ def get_prior_graph_struc(dataset):
             struc_map[ft] = []
         for other_ft in feature_list:
             if dataset == 'wadi' or dataset == 'wadi2':
-                # same group, 1_xxx, 2A_xxx, 2_xxx
+                
                 if other_ft is not ft and other_ft[0] == ft[0]:
                     struc_map[ft].append(other_ft)
             elif dataset == 'swat':
-                # FIT101, PV101
+                
                 if other_ft is not ft and other_ft[-3] == ft[-3]:
                     struc_map[ft].append(other_ft)
 
@@ -54,4 +54,3 @@ def get_prior_graph_struc(dataset):
 
 if __name__ == '__main__':
     get_graph_struc()
- 

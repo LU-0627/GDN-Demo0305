@@ -4,17 +4,17 @@ import re
 from sklearn.preprocessing import MinMaxScaler
 
 
-# max min(0-1)
+
 def norm(train, test):
 
-    normalizer = MinMaxScaler(feature_range=(0, 1)).fit(train) # scale training data to [0,1] range
+    normalizer = MinMaxScaler(feature_range=(0, 1)).fit(train) 
     train_ret = normalizer.transform(train)
     test_ret = normalizer.transform(test)
 
     return train_ret, test_ret
 
 
-# downsample by 10
+
 def downsample(data, labels, down_len):
     np_data = np.array(data)
     np_labels = np.array(labels)
@@ -24,18 +24,18 @@ def downsample(data, labels, down_len):
     down_time_len = orig_len // down_len
 
     np_data = np_data.transpose()
-    # print('before downsample', np_data.shape)
+    
 
     d_data = np_data[:, :down_time_len*down_len].reshape(col_num, -1, down_len)
     d_data = np.median(d_data, axis=2).reshape(col_num, -1)
 
     d_labels = np_labels[:down_time_len*down_len].reshape(-1, down_len)
-    # if exist anomalies, then this sample is abnormal
+    
     d_labels = np.round(np.max(d_labels, axis=1))
 
     d_data = d_data.transpose()
 
-    # print('after downsample', d_data.shape, d_labels.shape)
+    
 
     return d_data.tolist(), d_labels.tolist()
 
@@ -55,7 +55,7 @@ def main():
     train = train.fillna(0)
     test = test.fillna(0)
 
-    # trim column names
+    
     train = train.rename(columns=lambda x: x.strip())
     test = test.rename(columns=lambda x: x.strip())
 
@@ -63,10 +63,10 @@ def main():
     train_labels = np.zeros(len(train))
     test_labels = test.attack
 
-    # train = train.drop(columns=['attack'])
+    
     test = test.drop(columns=['attack'])
 
-    cols = [x[46:] for x in train.columns] # remove column name prefixes
+    cols = [x[46:] for x in train.columns] 
     train.columns = cols
     test.columns = cols
 

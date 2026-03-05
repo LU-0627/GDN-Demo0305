@@ -79,13 +79,13 @@ def train(model = None, save_path = '', config={},  train_dataloader=None, val_d
             i += 1
 
 
-        # each epoch
+        
         print('epoch ({} / {}) (Loss:{:.8f}, ACU_loss:{:.8f})'.format(
                         i_epoch, epoch, 
                         acu_loss/len(dataloader), acu_loss), flush=True
             )
 
-        # use val dataset to judge
+        
         if val_dataloader is not None:
 
             val_loss, val_result = test(model, val_dataloader)

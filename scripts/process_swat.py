@@ -4,16 +4,16 @@ import re
 from sklearn.preprocessing import MinMaxScaler
 
 
-# max min(0-1)
+
 def norm(train, test):
 
-    normalizer = MinMaxScaler(feature_range=(0, 1)).fit(train) # scale training data to [0,1] range
+    normalizer = MinMaxScaler(feature_range=(0, 1)).fit(train) 
     train_ret = normalizer.transform(train)
     test_ret = normalizer.transform(test)
 
     return train_ret, test_ret
 
-# downsample by 10
+
 def downsample(data, labels, down_len):
     np_data = np.array(data)
     np_labels = np.array(labels)
@@ -28,7 +28,7 @@ def downsample(data, labels, down_len):
     d_data = np.median(d_data, axis=2).reshape(col_num, -1)
 
     d_labels = np_labels[:down_time_len*down_len].reshape(-1, down_len)
-    # if exist anomalies, then this sample is abnormal
+    
     d_labels = np.round(np.max(d_labels, axis=1))
 
 
@@ -51,12 +51,12 @@ def main():
     train = train.fillna(0)
     test = test.fillna(0)
 
-    # trim column names
+    
     train = train.rename(columns=lambda x: x.strip())
     test = test.rename(columns=lambda x: x.strip())
 
-    # print(len(test.columns),test.columns)
-    # print(len(train.columns),train.columns)
+    
+    
 
 
     train_labels = train.attack
@@ -85,8 +85,8 @@ def main():
 
     train_df = train_df.iloc[2160:]
 
-    # print(train_df.values.shape)
-    # print(test_df.values.shape)
+    
+    
 
 
     train_df.to_csv('./train.csv')
