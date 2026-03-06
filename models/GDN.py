@@ -12,6 +12,22 @@ import torch.nn.functional as F
 from .graph_layer import GraphLayer
 
 
+def tensor_quantile(x, q, dim=-1, keepdim=True):
+    # Compatibility fallback for PyTorch versions without torch.quantile.
+    if hasattr(torch, 'quantile'):
+        return torch.quantile(x, q=q, dim=dim, keepdim=keepdim)
+
+    if q < 0 or q > 1:
+        raise ValueError('q should be in [0, 1].')
+
+    real_dim = dim if dim >= 0 else x.dim() + dim
+    n = x.size(real_dim)
+    k = int(math.ceil(q * n))
+    k = max(1, min(n, k))
+    values, _ = torch.kthvalue(x, k, dim=real_dim, keepdim=keepdim)
+    return values
+
+
 def get_batch_edge_index(org_edge_index, batch_num, node_num):
 
     edge_index = org_edge_index.clone().detach()
@@ -144,7 +160,7 @@ class GDN(nn.Module):
             normed_mat = torch.matmul(weights.norm(dim=-1).view(-1,1), weights.norm(dim=-1).view(1,-1))
             cos_ji_mat = cos_ji_mat / normed_mat
 
-            row_q = torch.quantile(cos_ji_mat, q=0.9, dim=-1, keepdim=True)
+            row_q = tensor_quantile(cos_ji_mat, q=0.9, dim=-1, keepdim=True)
             keep_mask = cos_ji_mat >= row_q
             keep_mask.fill_diagonal_(False)
 
